@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Location & Live Tracking</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .contact-info h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .info-item {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .info-item i {
+            background: #3498db;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .map-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .map-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .map-header h2 {
+            color: #2c3e50;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #1a252f;
+            transform: translateY(-2px);
+        }
+        
+        #combinedMap {
+            height: 500px;
+            width: 100%;
+        }
+        
+        .route-info {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+        
+        .route-info h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .info-card h4 {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #7f8c8d;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .content-section {
+                flex-direction: column;
+            }
+            
+            .map-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: #2ecc71;
+        }
+        
+        .status-inactive {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+<!--     
+    <header>
+        <div class="container">
+            <h1>Office Location & Live Tracking</h1>
+            <p>Find our office and get real-time directions from your location</p>
+        </div>
+    </header> -->
+
+    
+    <div class="container">
+        <section class="content-section">
+            <div class="contact-info">
+                <h2>Our Office Details</h2>
+                <div class="info-item">
+                    <i>📍</i>
+                    <div>
+                        <h3>Address</h3>
+                        <!-- <p>123 Business Avenue, Suite 500<br>New York, NY 10001</p> -->
+                         <p>Satyabama Complex, 301, KPHB Main Rd,<br> Opp. Sai Baba Temple, Bhagya Nagar Colony,<br> Hyderabad, Telangana 500085</p>
+
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i>📞</i>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i>✉️</i>
+                    <div>
+                        <h3>Email</h3>
+                        <p>info@company.com</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-info">
+                <h2>Our Office Details</h2>
+                <div class="info-item">
+                    <i>📍</i>
+                    <div>
+                        <h3>Address</h3>
+                        <!-- <p>123 Business Avenue, Suite 500<br>New York, NY 10001</p> -->
+                         <p>Satyabama Complex, 301, KPHB Main Rd,<br> Opp. Sai Baba Temple, Bhagya Nagar Colony,<br> Hyderabad, Telangana 500085</p>
+
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i>📞</i>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i>✉️</i>
+                    <div>
+                        <h3>Email</h3>
+                        <p>info@company.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- <footer>
+        <div class="container">
+            <p>&copy; 2023 Company Name. All rights reserved.</p>
+        </div>
+    </footer> -->
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Office coordinates (example: New York)
+    //    const officeCoords = [40.7128, -74.0060];
+    const officeCoords = [17.49396, 78.40084];
+
+        
+        // Initialize the combined map
+        const combinedMap = L.map('combinedMap').setView(officeCoords, 13);
+        
+        // Add tile layer to the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(combinedMap);
+        
+        // Add office marker with custom icon
+        const officeIcon = L.divIcon({
+            html: '<div style="background-color: #e74c3c; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Office</div>',
+            className: 'office-marker',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+        
+        const officeMarker = L.marker(officeCoords, {icon: officeIcon}).addTo(combinedMap)
+            .bindPopup(`
+                <div style="text-align: center;">
+                    <h3 style="margin: 0 0 10px; color: #2c3e50;">Our Office</h3>
+                    <p style="margin: 0;">Satyabama Complex, 301, KPHB Main Rd,<br>Opp. Sai Baba Temple, Bhagya Nagar Colony,<br>Hyderabad, Telangana 500085</p>
+                    <p style="margin: 10px 0 0; font-weight: bold; color: #3498db;">Click "Get Directions" to track your route here!</p>
+                </div>
+            `)
+            .openPopup();
+        
+        // Variables to store user location and route
+        let userLocation = null;
+        let userMarker = null;
+        let routeLayer = null;
+        
+        // Get user location and show route
+        document.getElementById('getLocationBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                // Show loading state
+                this.innerHTML = '<span>⏳</span> Locating...';
+                this.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // Get user coordinates
+                        userLocation = [position.coords.latitude, position.coords.longitude];
+                        
+                        // Add or update user marker
+                        if (userMarker) {
+                            combinedMap.removeLayer(userMarker);
+                        }
+                        
+                        const userIcon = L.divIcon({
+                            html: '<div style="background-color: #3498db; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">You</div>',
+                            className: 'user-marker',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        });
+                        
+                        userMarker = L.marker(userLocation, {icon: userIcon}).addTo(combinedMap)
+                            .bindPopup('<b>Your Current Location</b>')
+                            .openPopup();
+                        
+                        // Fit map to show both locations
+                        const bounds = L.latLngBounds([userLocation, officeCoords]);
+                        combinedMap.fitBounds(bounds, { padding: [50, 50] });
+                        
+                        // Show route information
+                        document.getElementById('routeInfo').style.display = 'block';
+                        
+                        // Calculate distance and time
+                        const distance = calculateDistance(
+                            userLocation[0], userLocation[1], 
+                            officeCoords[0], officeCoords[1]
+                        );
+                        
+                        document.getElementById('distanceInfo').textContent = `${distance.toFixed(2)} km`;
+                        
+                        // Estimate time (assuming average speed of 40 km/h in city)
+                        const timeMinutes = Math.round((distance / 40) * 60);
+                        document.getElementById('timeInfo').textContent = `${timeMinutes} minutes`;
+                        
+                        // Draw route line (simplified straight line for demo)
+                        if (routeLayer) {
+                            combinedMap.removeLayer(routeLayer);
+                        }
+                        
+                        routeLayer = L.polyline([userLocation, officeCoords], {
+                            color: '#3498db',
+                            weight: 5,
+                            opacity: 0.7,
+                            dashArray: '10, 10'
+                        }).addTo(combinedMap);
+                        
+                        // Reset button state
+                        document.getElementById('getLocationBtn').innerHTML = '<span>📍</span> Get Directions';
+                        document.getElementById('getLocationBtn').disabled = false;
+                    },
+                    function(error) {
+                        alert('Unable to retrieve your location. Please ensure location services are enabled and try again.');
+                        console.error('Geolocation error:', error);
+                        
+                        // Reset button state
+                        document.getElementById('getLocationBtn').innerHTML = '<span>📍</span> Get Directions';
+                        document.getElementById('getLocationBtn').disabled = false;
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        });
+        
+        // Reset map
+        document.getElementById('resetMapBtn').addEventListener('click', function() {
+            combinedMap.setView(officeCoords, 13);
+            
+            if (userMarker) {
+                combinedMap.removeLayer(userMarker);
+                userMarker = null;
+            }
+            
+            if (routeLayer) {
+                combinedMap.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+            
+            document.getElementById('routeInfo').style.display = 'none';
+            userLocation = null;
+            
+            // Ensure office popup is open
+            officeMarker.openPopup();
+        });
+        
+        // Calculate distance between two coordinates (Haversine formula)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Add some sample points of interest
+        const pointsOfInterest = [
+            {coords: [40.715, -74.005], name: "Coffee Shop", type: "food"},
+            {coords: [40.710, -74.008], name: "Parking Garage", type: "parking"},
+            {coords: [40.718, -74.002], name: "Public Transport", type: "transport"}
+        ];
+        
+        pointsOfInterest.forEach(poi => {
+            let iconColor = '#2ecc71'; // Default green
+            
+            if (poi.type === 'food') iconColor = '#e67e22';
+            if (poi.type === 'parking') iconColor = '#9b59b6';
+            if (poi.type === 'transport') iconColor = '#34495e';
+            
+            const poiIcon = L.divIcon({
+                html: `<div style="background-color: ${iconColor}; color: white; border-radius: 4px; padding: 4px 8px; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${poi.name}</div>`,
+                className: 'poi-marker',
+                iconSize: [60, 20],
+                iconAnchor: [30, 10]
+            });
+            
+            L.marker(poi.coords, {icon: poiIcon}).addTo(combinedMap)
+                .bindPopup(`<b>${poi.name}</b><br>Near our office`);
+        });
+    </script>
+</body>
+</html>

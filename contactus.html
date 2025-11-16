@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- title -->
+    <title>FixMyRide</title>
+    <!-- favicons -->
+     <link rel="shortcut icon" href="./assets/favicon.png" type="image/png">
+     <!-- bs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <!-- external-css -->
+    <link rel="stylesheet" href="style.css">
+    <!-- bs-icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  </head>
+  <body>
+    <!-- navbar-section -->
+    <nav class="navbar navbar-expand-lg sticky-top p-2 bg-white">
+      <div class="container-fluid">
+        <div class="d-flex">
+          <img src="./assets/logo.jpg" height="50px">
+           <a class="navbar-brand fs-4 fw-bold" href="#">FixMy<span style="color:#1E69B8">Ride</span></a>
+        </div>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto text-end mb-2 mb-lg-0">
+            <li class="nav-item mx-4">
+              <a class="nav-link" aria-current="page" href="./index.html">Home</a>
+            </li>
+            <li class="nav-item mx-4">
+              <a class="nav-link" href="./about.html">About</a>
+            </li>
+            <li class="nav-item mx-4">
+              <a class="nav-link" href="./services.html">Services</a>
+            </li>
+            <li class="nav-item mx-4">
+              <a class="nav-link" href="./appointment.html">Appointment</a>
+            </li>
+            <li class="nav-item mx-4">
+              <a class="nav-link" href="./contact.html">Contact</a>
+            </li>
+          </ul>
+          <!-- <form class="d-flex" role="search">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
+          </form> -->
+        </div>
+      </div>
+    </nav>
+
+    <!-- map -->
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d15203.664620221993!2d83.17946029689865!3d17.70142053184202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s27%20Coastal%20Drive%20Auto%20Nagar%20Visakhapatnam%2C%20AP%20530012!5e0!3m2!1sen!2sin!4v1754142541380!5m2!1sen!2sin"
+      width="100%"
+      height="450"
+      style="border: 0"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+    <!-- contact -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-4 col-lg-4">
+            <h5>CALL US NOW AT</h5>
+            <div class="d-flex">
+              <p class="my-2">
+                <i class="text-primary bi bi-telephone fs-3 me-3"></i>
+              </p>
+              <div>
+                <p class="m-0">Mobile: +91 9876543210</p>
+                <p class="m-0">Assistance: +91 98765123499</p>
+                <p class="m-0">Weekdays: +91 9876541230</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4 col-lg-4">
+            <h5>ADDRESS</h5>
+            <div class="d-flex">
+              <p class="my-2">
+                <i class="text-primary bi-geo-alt fs-3 me-3"></i>
+              </p>
+              <div>
+                <p>
+                  27 Coastal Drive<br />Auto Nagar<br />Visakhapatnam, AP 530012
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4 col-lg-4">
+            <h5>24/7 ASSISTANCE</h5>
+            <div class="d-flex">
+              <p class="my-2">
+                <i class="text-primary bi-truck fs-3 me-3"></i>
+              </p>
+              <div>
+                <p>Anytime. Anywhere. We're ready to assist you.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- form -->
+    <section class="py-5">
+      <div class="container">
+        <h2 class="text-center fw-bold">GET IN TOUCH</h2>
+        <div class="row">
+          <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="col my-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="First name *"
+                aria-label="First name"
+              />
+            </div>
+            <div class="col my-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Last name *"
+                aria-label="Last name"
+              />
+            </div>
+            <div class="col my-3">
+              <input
+                type="tel"
+                class="form-control"
+                placeholder="Your Phone"
+                aria-label="Your Phone"
+              />
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="form-floating my-3">
+              <textarea
+                class="form-control"
+                placeholder="Leave a comment here"
+                id="floatingTextarea"
+                style="height: 150px; resize:none;"
+              ></textarea>
+              <label for="floatingTextarea">Message *</label>
+            </div>
+          </div>
+          <div class="col-6">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
+      <label class="form-check-label" for="invalidCheck2">
+        Agree to terms and conditions
+      </label>
+    </div>
+  </div>
+  <div class="col-6">
+    <button class="btn btn-primary" type="submit">SEND MESSAGE</button>
+  </div>
+        </div>
+      </div>
+    </section>
+
+         <!-- footer -->
+    <section>
+      <div class="container-fluid bg-dark text-white p-4">
+        <div class="row">
+          <div class="col-sm-12 col-md-4 col-lg-3 ">
+            <div class="d-flex align-items-center">
+              <img src="./assets/logo.jpg" class="me-1 rounded-pill" height="40px">
+              <h4>FixMyRide</h4>
+            </div>
+            <p class="text-white-50 my-3">Quick, reliable car care you can count on.</p>
+            <div class="text-white-50">
+              <i class="mx-4 bi bi-facebook"></i>
+              <i class="mx-4 bi bi-twitter"></i>
+              <i class="mx-4 bi bi-instagram"></i>
+              <i class="mx-4 bi bi-whatsapp"></i>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4 col-lg-3 px-5">
+            <ul class="list-unstyled">
+              <li><h4>Our Services</h4></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Engine Diagnostics</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Lube, Oil and Filters</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Belts and Hoses</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Air Conditioning</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Brake Repair</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Tire and Wheel Services</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Other Car Services</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-12 col-md-4 col-lg-3">
+            <ul class="list-unstyled">
+              <li><h4>Links</h4></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Home</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">About</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Services</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Contact Us</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Privacy Policy</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-12 col-md-4 col-lg-3">
+            <ul class="list-unstyled">
+              <li><h4>Contact</h4></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50"><i class="me-1 bi bi-envelope-fill"></i>support@fixmyride.in</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50"><i class="me-1 bi bi-telephone-fill"></i>+91 9876543210</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50"><i class="me-1 bi bi-geo-alt-fill"></i>27 Coastal Drive, Auto Nagar<br>Visakhapatnam, AP 530012</a></li>
+            </ul>
+            <ul class="list-unstyled">
+              <li><h4>Hours</h4></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">OpeningTimings - Mon-Fri: 7:30am - 5:30pm</a></li>
+              <li class="mb-2"><a href="" class="text-decoration-none text-white-50">Sunday: Closed</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+        <div class="bg-secondary-subtle p-1">
+      <p class="text-center">&copy; 2025 FixMyRide. All rights reserved.</p>
+    </div>
+  </body>
+</html>

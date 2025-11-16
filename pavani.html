@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Raise a Complaint</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <style>
+    #map { height: 350px; border-radius: 0.5rem; }
+    #preview { width: 100%; max-height: 250px; object-fit: cover; border-radius: 0.5rem; }
+    #cameraContainer video { width: 100%; border-radius: 0.5rem; }
+    #cameraContainer { display: none; }
+  </style>
+</head>
+
+<body class="bg-light">
+<div class="container py-5">
+
+  <h2 class="text-center text-primary fw-bold mb-4">Raise a Complaint</h2>
+
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <div class="row g-4">
+
+      <!-- LEFT SIDE FORM -->
+      <div class="col-md-6">
+
+        <form id="complaintForm">
+
+          <!-- Upload Image -->
+          <label class="fw-semibold mb-2">Upload Image</label>
+
+          <div class="d-flex gap-2 mb-3">
+            <button type="button" id="fileBtn" class="btn btn-primary btn-sm">Choose a File</button>
+            <img src="./assets/camera.png" alt="cameraimage" width="30px" id="cameraBtn" style="cursor: pointer;">
+          </div>
+
+          <input type="file" id="photoInput" accept="image/*" class="d-none">
+
+          <div id="cameraContainer" class="mb-3">
+            <video id="camera" autoplay></video>
+            <button type="button" id="captureBtn" class="btn btn-danger btn-sm mt-2">Capture Photo</button>
+          </div>
+
+          <img id="preview" class="d-none mb-3" />
+
+          <!-- Description -->
+          <label class="fw-semibold">Short Description</label>
+          <textarea id="description" class="form-control mb-3" rows="2" style="resize: none;"></textarea>
+
+          <!-- Location -->
+          <label class="fw-semibold">Location</label>
+          <input type="text" id="manualLocation" class="form-control mb-2" placeholder="Type location..." required />
+          <small class="text-muted">If location access is denied, please type it manually.</small>
+
+          <!-- Submit -->
+          <div class="mt-4">
+            <button type="submit" class="btn btn-success">Submit Complaint</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- MAP -->
+      <div class="col-md-6">
+        <div id="map" class="w-100 shadow-sm"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  let map, marker, typingTimeout;
+  let cameraStream = null;
+  const preview = document.getElementById("preview");
+
+  // Initialize Leaflet Map (India)
+  function initMap() {
+    map = L.map("map").setView([20.5937, 78.9629], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+  }
+
+  // Show Marker on Map
+  function showMarker(lat, lng, popup = "") {
+    if (!marker) marker = L.marker([lat, lng]).addTo(map);
+    else marker.setLatLng([lat, lng]);
+
+    if (popup) marker.bindPopup(popup).openPopup();
+
+    map.setView([lat, lng], 14);
+  }
+
+  // Get User Location (GPS)
+  function getUserLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+          {
+            headers: { "User-Agent": "Grievance-App" }
+          }
+        );
+
+        const data = await res.json();
+
+        document.getElementById("manualLocation").value = data.display_name;
+        showMarker(lat, lng, "Your Location");
+
+      } catch (err) {
+        console.error("Reverse geocode failed:", err);
+      }
+
+    }, () => {
+      alert("Please allow location access.");
+    });
+  }
+
+  // File Button Click
+  document.getElementById("fileBtn").addEventListener("click", () => {
+    stopCamera();
+    document.getElementById("cameraContainer").style.display = "none";
+    document.getElementById("photoInput").click();
+  });
+
+  // File Selected → Preview Image
+  document.getElementById("photoInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (ev) => {
+      preview.src = ev.target.result;
+      preview.classList.remove("d-none");
+    };
+
+    reader.readAsDataURL(file);
+    getUserLocation();
+  });
+
+  // Open Camera
+  document.getElementById("cameraBtn").addEventListener("click", async () => {
+    document.getElementById("cameraContainer").style.display = "block";
+
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      document.getElementById("camera").srcObject = cameraStream;
+    } catch (err) {
+      alert("Camera blocked! Please allow camera access.");
+    }
+  });
+
+  // Capture Photo
+  document.getElementById("captureBtn").addEventListener("click", () => {
+    const video = document.getElementById("camera");
+    const canvas = document.createElement("canvas");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    canvas.getContext("2d").drawImage(video, 0, 0);
+
+    const dataUrl = canvas.toDataURL("image/png");
+    preview.src = dataUrl;
+    preview.classList.remove("d-none");
+
+    stopCamera();
+    document.getElementById("cameraContainer").style.display = "none";
+
+    getUserLocation();
+  });
+
+  // Stop Camera
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+    }
+  }
+
+  // Live Search Location
+  document.getElementById("manualLocation").addEventListener("input", () => {
+    const text = manualLocation.value.trim();
+    if (text.length < 3) return;
+
+    clearTimeout(typingTimeout);
+
+    typingTimeout = setTimeout(async () => {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.length > 0) {
+          const { lat, lon, display_name } = data[0];
+          showMarker(lat, lon, display_name);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+    }, 500);
+  });
+
+  // Submit Form
+  document.getElementById("complaintForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const description = document.getElementById("description").value.trim();
+    const location = document.getElementById("manualLocation").value.trim();
+    const fileInput = document.getElementById("photoInput");
+    const previewSrc = preview.src;
+
+    const hasUploaded = fileInput.files.length > 0;
+    const hasCaptured = previewSrc && previewSrc.startsWith("data:image");
+
+    if (!hasUploaded && !hasCaptured) {
+      alert("Please upload an image or capture a photo.");
+      return;
+    }
+
+    let finalImage = hasUploaded ? fileInput.files[0] : previewSrc;
+
+    const complaintData = {
+      description,
+      location,
+      image: finalImage
+    };
+
+    console.log("FORM DATA:", complaintData);
+
+    alert("Complaint Submitted Successfully!");
+
+    document.getElementById("complaintForm").reset();
+    preview.classList.add("d-none");
+  });
+
+  window.onload = initMap;
+</script>
+
+</body>
+</html>
